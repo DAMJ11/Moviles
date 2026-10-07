@@ -17,9 +17,18 @@ export default function App() {
     agregarTarea,
     alternarTarea,
     eliminarTarea, // Función de Duber Monsalve
+    // ===== SOFIA: DESDE AQUÍ =====
+    editarTarea, // Función de Sofia
+    // ===== SOFIA: HASTA AQUÍ =====
   } = useTareas();
 
   const [textoNuevaTarea, setTextoNuevaTarea] = useState('');
+
+  // ===== SOFIA: DESDE AQUÍ ===== (estados del modo edición)
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [textoEditado, setTextoEditado] = useState('');
+  const [errorEdicion, setErrorEdicion] = useState(false);
+  // ===== SOFIA: HASTA AQUÍ =====
 
   const handleAgregar = () => {
     if (!textoNuevaTarea.trim()) {
@@ -30,6 +39,33 @@ export default function App() {
       setTextoNuevaTarea('');
     }
   };
+
+  // ===== SOFIA: DESDE AQUÍ ===== (funciones de editar)
+  // Al tocar "Editar": activa el modo edición con el título actual
+  const empezarEdicion = (id: string, tituloActual: string) => {
+    setEditandoId(id);
+    setTextoEditado(tituloActual);
+    setErrorEdicion(false);
+  };
+
+  // Al tocar "Guardar": llama a editarTarea del hook
+  const guardarEdicion = () => {
+    if (editandoId && editarTarea(editandoId, textoEditado)) {
+      setEditandoId(null);
+      setTextoEditado('');
+      setErrorEdicion(false);
+    } else {
+      setErrorEdicion(true);
+    }
+  };
+
+  // Al tocar "Cancelar": sale del modo edición sin cambiar nada
+  const cancelarEdicion = () => {
+    setEditandoId(null);
+    setTextoEditado('');
+    setErrorEdicion(false);
+  };
+  // ===== SOFIA: HASTA AQUÍ =====
 
   const tareasCompletadas = tareas.filter((t) => t.completada).length;
 
@@ -100,31 +136,85 @@ export default function App() {
           ) : (
             tareas.map((tarea) => (
               <View key={tarea.id} style={styles.taskCard}>
-                <TouchableOpacity
-                  style={[styles.checkbox, tarea.completada && styles.checkboxActive]}
-                  onPress={() => alternarTarea(tarea.id)}
-                  activeOpacity={0.7}
-                >
-                  {tarea.completada && <Text style={styles.checkmark}>X</Text>}
-                </TouchableOpacity>
+                {/* ===== SOFIA: DESDE AQUÍ ===== (condición modo edición / modo normal) */}
+                {editandoId === tarea.id ? (
+                  /* MODO EDICIÓN (Sofia) */
+                  <View style={styles.editContainer}>
+                    <TextInput
+                      style={styles.editInput}
+                      value={textoEditado}
+                      onChangeText={(t) => {
+                        setTextoEditado(t);
+                        setErrorEdicion(false);
+                      }}
+                      autoFocus
+                      onSubmitEditing={guardarEdicion}
+                      placeholder="Nuevo título..."
+                      placeholderTextColor="#94a3b8"
+                    />
+                    {errorEdicion && (
+                      <Text style={styles.editError}>
+                        El título no puede estar vacío
+                      </Text>
+                    )}
+                    <View style={styles.editButtonsRow}>
+                      <TouchableOpacity
+                        style={styles.btnGuardar}
+                        onPress={guardarEdicion}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.btnGuardarText}>Guardar</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.btnCancelar}
+                        onPress={cancelarEdicion}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.btnCancelarText}>Cancelar</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : (
+                  /* MODO NORMAL */
+                  <>
+                    {/* ===== SOFIA: HASTA AQUÍ ===== (el modo normal sigue abajo) */}
+                    <TouchableOpacity
+                      style={[styles.checkbox, tarea.completada && styles.checkboxActive]}
+                      onPress={() => alternarTarea(tarea.id)}
+                      activeOpacity={0.7}
+                    >
+                      {tarea.completada && <Text style={styles.checkmark}>X</Text>}
+                    </TouchableOpacity>
 
-                <Text
-                  style={[
-                    styles.taskTitle,
-                    tarea.completada && styles.taskTitleCompleted,
-                  ]}
-                >
-                  {tarea.titulo}
-                </Text>
+                    <Text
+                      style={[
+                        styles.taskTitle,
+                        tarea.completada && styles.taskTitleCompleted,
+                      ]}
+                    >
+                      {tarea.titulo}
+                    </Text>
 
-                {/* FUNCION DUBER MONSALVE: Boton Eliminar */}
-                <TouchableOpacity
-                  onPress={() => eliminarTarea(tarea.id)}
-                  style={styles.btnEliminar}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                  <Text style={styles.btnEliminarText}>Eliminar</Text>
-                </TouchableOpacity>
+                    {/* ===== SOFIA: DESDE AQUÍ ===== (botón Editar) */}
+                    <TouchableOpacity
+                      onPress={() => empezarEdicion(tarea.id, tarea.titulo)}
+                      style={styles.btnEditar}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Text style={styles.btnEditarText}>Editar</Text>
+                    </TouchableOpacity>
+                    {/* ===== SOFIA: HASTA AQUÍ ===== */}
+
+                    {/* FUNCION DUBER MONSALVE: Boton Eliminar */}
+                    <TouchableOpacity
+                      onPress={() => eliminarTarea(tarea.id)}
+                      style={styles.btnEliminar}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Text style={styles.btnEliminarText}>Eliminar</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
               </View>
             ))
           )}
@@ -132,7 +222,7 @@ export default function App() {
           {/* TARJETA DE EQUIPO / PARTICIPANTES */}
           <View style={styles.teamCard}>
             <Text style={styles.teamTitle}>Equipo de Trabajo (4 Integrantes)</Text>
-            
+
             <View style={styles.memberRow}>
               <View style={styles.memberInfo}>
                 <Text style={styles.memberName}>1. Duber Monsalve</Text>
@@ -153,15 +243,19 @@ export default function App() {
               </View>
             </View>
 
+            {/* ===== SOFIA: DESDE AQUÍ ===== (mi fila en la tarjeta del equipo) */}
             <View style={styles.memberRow}>
               <View style={styles.memberInfo}>
                 <Text style={styles.memberName}>3. Sofia</Text>
-                <Text style={styles.memberStatusPending}>Pendiente de elegir función</Text>
+                <Text style={styles.memberStatusDone}>
+                  Funcion: editarTarea(id, nuevoTitulo)
+                </Text>
               </View>
-              <View style={styles.badgePending}>
-                <Text style={styles.badgePendingText}>Por hacer</Text>
+              <View style={styles.badgeDone}>
+                <Text style={styles.badgeDoneText}>Lista</Text>
               </View>
             </View>
+            {/* ===== SOFIA: HASTA AQUÍ ===== */}
 
             <View style={styles.memberRow}>
               <View style={styles.memberInfo}>
@@ -348,6 +442,68 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 12,
   },
+
+  // ===== SOFIA: DESDE AQUÍ ===== (estilos de editar)
+  btnEditar: {
+    backgroundColor: '#e0e7ff',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    marginRight: 6,
+  },
+  btnEditarText: {
+    color: '#4f46e5',
+    fontWeight: '600',
+    fontSize: 12,
+  },
+  editContainer: {
+    flex: 1,
+  },
+  editInput: {
+    borderWidth: 1,
+    borderColor: '#a5b4fc',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 15,
+    color: '#0f172a',
+    backgroundColor: '#f8fafc',
+  },
+  editError: {
+    color: '#dc2626',
+    fontSize: 12,
+    marginTop: 4,
+    fontWeight: '500',
+  },
+  editButtonsRow: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  btnGuardar: {
+    backgroundColor: '#dcfce7',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  btnGuardarText: {
+    color: '#16a34a',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  btnCancelar: {
+    backgroundColor: '#f1f5f9',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  btnCancelarText: {
+    color: '#64748b',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  // ===== SOFIA: HASTA AQUÍ =====
+
   teamCard: {
     marginTop: 20,
     backgroundColor: '#ffffff',
@@ -412,3 +568,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+

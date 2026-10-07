@@ -51,11 +51,36 @@ export function useTareas() {
     setTareas((anteriores) => anteriores.filter((tarea) => tarea.id !== id));
   }
 
+
+   // ==========================================================
+  // FUNCIÓN DESARROLLADA POR: Sofia
+  // ==========================================================
+  /**
+   * Editar Tarea
+   * Desarrollado por: Sofia
+   * Descripción: Busca la tarea por su ID y le cambia el título por el
+   * nuevo texto, usando .map() para no modificar el resto de tareas.
+   * Devuelve false si el nuevo título está vacío (no se guarda el cambio).
+   */
+  function editarTarea(id: string, nuevoTitulo: string): boolean {
+    const titulo = nuevoTitulo.trim();
+
+    if (!titulo) {
+      return false;
+    }
+
+    setTareas((anteriores) =>
+      anteriores.map((tarea) =>
+        tarea.id === id ? { ...tarea, titulo } : tarea
+      )
+    );
+    return true;
+  }
+
   // ==========================================================
   // ESPACIO PARA LOS DEMÁS INTEGRANTES:
   // - Carlos: (Ver ideas en GUIA_EQUIPO.md)
-  // - Sofia:  (Ver ideas en GUIA_EQUIPO.md)
-  // - Isabel: (Ver ideas en GUIA_EQUIPO.md)
+  // - Isabella: (Ver ideas en GUIA_EQUIPO.md)
   // ==========================================================
 
   return {
@@ -63,5 +88,6 @@ export function useTareas() {
     agregarTarea,
     alternarTarea,
     eliminarTarea, // Función de Duber Monsalve
+    editarTarea, // Función de Sofia ALzate 
   };
 }
