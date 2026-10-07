@@ -100,9 +100,15 @@ function vaciarLista() {
   setTareas([]);
 }
 
-  // ==========================================================
-  // ESPACIO PARA LOS DEMÁS INTEGRANTES:
-  // - Carlos: (Ver ideas en GUIA_EQUIPO.md)
+ function calificarTarea(id: string, nota: number) {
+  if (nota < 0 || nota > 5) return false;
+  setTareas((anteriores) =>
+    anteriores.map((t) => (t.id === id ? { ...t, calificacion: nota } : t))
+  );
+  return true;
+} // ==========================================================
+  // FUNCION DESARROLLADA POR CARLOS ANDRES////
+  // Calificar la tarea///
  
 
   
@@ -112,6 +118,7 @@ function vaciarLista() {
     alternarTarea,
     eliminarTarea, // Función de Duber Monsalve
     editarTarea, // Función de Sofia ALzate 
-    vaciarLista, // Función de Isabella
+    vaciarLista,
+    calificarTarea, // Función de Isabella
   };
 }
