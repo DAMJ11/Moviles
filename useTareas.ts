@@ -100,6 +100,8 @@ function vaciarLista() {
   setTareas([]);
 }
 
+ // FUNCION DESARROLLADA POR CARLOS ANDRES////
+
  function calificarTarea(id: string, nota: number) {
   if (nota < 0 || nota > 5) return false;
   setTareas((anteriores) =>
