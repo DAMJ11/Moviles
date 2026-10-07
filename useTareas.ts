@@ -77,17 +77,41 @@ export function useTareas() {
     return true;
   }
 
+   // FUNCIÓN DESARROLLADA POR ISABELLA/////
+
+  function editarTarea(id: string, nuevoTitulo: string): boolean {
+  const titulo = nuevoTitulo.trim();
+
+  if (!titulo) {
+    return false;
+  }
+
+  setTareas((anteriores) =>
+    anteriores.map((tarea) =>
+      tarea.id === id ? { ...tarea, titulo } : tarea
+    )
+  );
+
+  return true;
+}
+// FUNCIÓN DESARROLLADA POR ISABELLA/////
+// Vaciar toda la lista de tareas///
+function vaciarLista() {
+  setTareas([]);
+}
+
   // ==========================================================
   // ESPACIO PARA LOS DEMÁS INTEGRANTES:
   // - Carlos: (Ver ideas en GUIA_EQUIPO.md)
-  // - Isabella: (Ver ideas en GUIA_EQUIPO.md)
-  // ==========================================================
+ 
 
+  
   return {
     tareas,
     agregarTarea,
     alternarTarea,
     eliminarTarea, // Función de Duber Monsalve
     editarTarea, // Función de Sofia ALzate 
+    vaciarLista, // Función de Isabella
   };
 }

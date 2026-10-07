@@ -20,6 +20,7 @@ export default function App() {
     // ===== SOFIA: DESDE AQUÍ =====
     editarTarea, // Función de Sofia
     // ===== SOFIA: HASTA AQUÍ =====
+    vaciarLista, // Función de Isabella
   } = useTareas();
 
   const [textoNuevaTarea, setTextoNuevaTarea] = useState('');
@@ -122,6 +123,15 @@ export default function App() {
               <Text style={styles.btnAgregarText}>Agregar</Text>
             </TouchableOpacity>
           </View>
+
+          {/* FUNCIÓN ISABELLA: Vaciar lista */}
+            <TouchableOpacity
+            style={styles.btnVaciar}
+            onPress={vaciarLista}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.btnVaciarText}>Vaciar lista</Text>
+            </TouchableOpacity>
 
           {/* LISTADO DE TAREAS */}
           <Text style={styles.sectionTitle}>Listado de Tareas ({tareas.length})</Text>
@@ -259,11 +269,13 @@ export default function App() {
 
             <View style={styles.memberRow}>
               <View style={styles.memberInfo}>
-                <Text style={styles.memberName}>4. Isabel</Text>
-                <Text style={styles.memberStatusPending}>Pendiente de elegir función</Text>
+                <Text style={styles.memberName}>4. Isabella</Text>
+                <Text style={styles.memberStatusDone}>
+                Función: vaciarLista()
+                </Text>
               </View>
-              <View style={styles.badgePending}>
-                <Text style={styles.badgePendingText}>Por hacer</Text>
+              <View style={styles.badgeDone}>
+                <Text style={styles.badgeDoneText}>Lista</Text>
               </View>
             </View>
           </View>
@@ -442,7 +454,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 12,
   },
+///ISABELLA///
+btnVaciar: {
+  backgroundColor: '#fee2e2',
+  paddingVertical: 10,
+  borderRadius: 10,
+  alignItems: 'center',
+  marginBottom: 18,
+},
 
+btnVaciarText: {
+  color: '#dc2626',
+  fontWeight: '700',
+  fontSize: 13,
+},
   // ===== SOFIA: DESDE AQUÍ ===== (estilos de editar)
   btnEditar: {
     backgroundColor: '#e0e7ff',
